@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+########################################################
+## Copyright (c) 2019 Roman Rybalko
+## Covered under the included MIT/X-Consortium License:
+##    http://www.opensource.org/licenses/mit-license.php
+## All modifications and contributions by other persons to
+## this script are assumed to have been donated to the
+## Logwatch project and thus assume the above copyright
+## and licensing terms.  If you want to make contributions
+## under your own copyright or a different license this
+## must be explicitly stated in the contribution an the
+## Logwatch project reserves the right to not accept such
+## contributions.  If you have made significant
+## contributions to this script and want to claim
+## copyright please contact logwatch-devel@lists.sourceforge.net.
+#########################################################
+
+use strict;
+
+my ($Blocked, $Timeouted, $Passed) = (0, 0, 0);
+my %Users;
+
+while (defined(my $ThisLine = <STDIN>)) {
+   if ( $ThisLine =~ /block.+\]:/ ) {
+      if ( $ThisLine =~ /timeout/ ) {
+         ++$Timeouted;
+      } else {
+         ++$Blocked;
+      }
+   }
+   elsif ( $ThisLine =~ /pass.+\[:/ ) {
+      ++$Passed;
+      my ($User) = $ThisLine =~ /username%(\S+?)@/;
+      $User = "(anonymous)" unless $User;
+      ++$Users{$User};
+   }
+}
+
+print "Connections Blocked: $Blocked\n";
+print "Connections Passed: $Passed\n";
+print "Connections Timeouted: $Timeouted\n";
+
+print "\nUsers Passed:\n";
+foreach (keys %Users) {
+   print "   $_: $Users{$_} Time(s)\n";
+}
+
+exit(0);
+
+# vi: shiftwidth=3 tabstop=3 syntax=perl et
+# Local Variables:
+# mode: perl
+# perl-indent-level: 3
+# indent-tabs-mode: nil
+# End:
