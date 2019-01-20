@@ -22,16 +22,16 @@ my ($Blocked, $Timeouted, $Passed) = (0, 0, 0);
 my %Users;
 
 while (defined(my $ThisLine = <STDIN>)) {
-   if ( $ThisLine =~ /block.+\]:/ ) {
+   if ( $ThisLine =~ /block.+ \]: / ) {
       if ( $ThisLine =~ /timeout/ ) {
          ++$Timeouted;
       } else {
          ++$Blocked;
       }
    }
-   elsif ( $ThisLine =~ /pass.+\[:/ ) {
+   elsif ( $ThisLine =~ /pass.+ \[: / ) {
       ++$Passed;
-      my ($User) = $ThisLine =~ /username%(\S+?)@/;
+      my ($User) = $ThisLine =~ /username%(.+?)@/;
       $User = "(anonymous)" unless $User;
       ++$Users{$User};
    }
